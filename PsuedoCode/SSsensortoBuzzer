@@ -1,0 +1,49 @@
+int get_SSSensor(int index){// 왼 뒤 오
+    switch (index){
+        case Left: 
+        ...
+        break;
+
+        case Back:
+        ...get sensor B
+        break;
+
+        case Right:
+        ... get sensor R
+        break;
+    }
+
+    return 0;
+}
+
+int output_Buzzer(int index){// 왼 뒤 오
+    switch (index){
+        case Left: 
+        ...tone();
+        break;
+
+        case Back:
+        ...tone ();
+        break;
+
+        case Right:
+        ... tone();
+        break;
+    }
+
+    return 0;
+}
+
+void loop(){
+    if (get_SSSensor(L) < 100){
+        output_Buzzer(L);
+    }
+
+    if (get_SSSensor(B) < 100){
+        output_Buzzer(B);
+    }
+
+    if (get_SSSensor(R) < 100){
+        output_Buzzer(R);
+    }
+}
