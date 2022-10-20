@@ -1,0 +1,70 @@
+int trig_pin_L = 2; //좌측 초음파센서
+int echo_pin_L = 3;//좌측 초음파센서
+int trig_pin_R = 10; //우측 초음파 센서
+int echo_pin_R = 11;//우측 초음파 센서
+
+
+void setup()
+{
+ Serial.begin(9600);
+ pinMode(trig_pin_L,OUTPUT);
+ pinMode(echo_pin_L,INPUT);
+ pinMode(trig_pin_R,OUTPUT);
+ pinMode(echo_pin_R,INPUT);
+}
+
+
+     int get_distance_L()
+       {
+        long time_L, distance_L; //시간 (us 단위) 거리(cm단위)
+       
+        digitalWrite(trig_pin_L, LOW);
+        delayMicroseconds(2);
+        digitalWrite(trig_pin_L, HIGH);
+        delayMicroseconds(10);
+        digitalWrite(trig_pin_L, LOW);
+
+        time_L = pulseIn(echo_pin_L, HIGH);//시간
+        distance_L = time_L * 340/10000/2 ;
+        return distance_L;
+       }
+
+   int get_distance_R()
+       {
+        long time_R, distance_R; //시간 (us 단위) 거리(cm단위)
+       
+        digitalWrite(trig_pin_R, LOW);
+        delayMicroseconds(2);
+        digitalWrite(trig_pin_R, HIGH);
+        delayMicroseconds(10);
+        digitalWrite(trig_pin_R, LOW);
+
+        time_R = pulseIn(echo_pin_R, HIGH);//시간
+
+        distance_R = time_R * 340/10000/2 ;
+        return distance_R;
+       }
+       
+       void loop()
+       {
+         long distance_L = get_distance_L() ;
+         long distance_R = get_distance_R() ;
+
+         if( distance_L <= 400)
+         {
+           tone(1, 1000, 20);    //1번핀으로 1,000Hz음을 20ms 동안 발생
+           delay(distance_L * 5);  //거리가 짧을수록 자주 울림.
+         }
+         else if( distance_R <= 400)
+         {
+           tone(12, 1000, 20);    //12번핀으로 1,000Hz음을 20ms 동안 발생
+           delay(distance_R * 5);  //거리가 짧을수록 자주 울림.
+         }
+         else if( distance_L <= 400 & distance_R <= 400)
+         {
+           tone(1, 1000, 20);    //1번핀으로 1,000Hz음을 20ms 동안 발생
+           delay(distance_L * 5);  //거리가 짧을수록 자주 울림.
+           tone(12, 1000, 20);    //12번핀으로 1,000Hz음을 20ms 동안 발생
+           delay(distance_R * 5);  //거리가 짧을수록 자주 울림.
+         }
+       }
