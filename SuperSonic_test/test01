@@ -1,0 +1,71 @@
+////////////////////////////////////////////////////
+// test each SS sensor 
+#define SSLeft 1
+#define SSBack 2
+#define SSRight 3
+#define BZLeft 1
+#define BZBack 2
+#define BZRight 3
+
+#define trig_pin_L  5   // 좌측 초음파센서
+#define echo_pin_L  6   // 좌측 초음파센서
+#define trig_pin_R  10  // 우측 초음파 센서
+#define echo_pin_R  11  // 우측 초음파 센서
+#define Limit_dis 100 // 지정된 거리 이하일때 반응, 단위 [cm]
+
+int Set_Sensors(){
+  // setting SuperSonic Sensor 
+  pinMode(trig_pin_L, OUTPUT);
+  pinMode(echo_pin_L, INPUT);
+  pinMode(trig_pin_R, OUTPUT);
+  pinMode(echo_pin_R, INPUT);
+
+  return 0;
+}
+
+
+double getSS_R(){
+  double distance_R;
+  digitalWrite(trig_pin_R, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig_pin_R, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin_R, LOW);
+
+  double time_R = pulseIn(echo_pin_R, HIGH);
+  distance_R = time_R * 340 / 10000 / 2;
+
+  return distance_R;
+}
+
+double getSS_L(){
+  double distance_L;
+  digitalWrite(trig_pin_L, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig_pin_L, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin_L, LOW);
+
+  double time_L = pulseIn(echo_pin_L, HIGH);
+  distance_L = time_L * 340 / 10000 / 2;
+
+  return distance_L;
+}
+////////////////////////////////////////////////////
+
+void setup() {
+  Serial.begin(9600);
+  Set_Sensors();
+}
+
+void loop() {
+  double S1 = getSS_L();
+  double S2 = getSS_R();
+
+  if (S1 < Limit_dis){
+    Serial.println(S1);
+  }
+  if (S2 < Limit_dis){
+    Serial.println(S2);
+  }
+}
