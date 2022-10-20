@@ -85,10 +85,13 @@ void setup() {
 }
 
 void loop() {
-  if (get_SSSensor(SSLeft) < Limit_dis){
+  double getSS_L = get_SSSensor(SSLeft);
+  double getSS_R = get_SSSensor(SSRight);
+  
+  if (getSS_L < Limit_dis){
     output_Buzzer(BZLeft);
   }
-  if (get_SSSensor(SSRight) < Limit_dis){
+  if (getSS_R < Limit_dis){
     output_Buzzer(BZRight);
   }
 }
