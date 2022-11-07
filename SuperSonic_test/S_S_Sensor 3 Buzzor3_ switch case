@@ -1,0 +1,120 @@
+#define SSLeft 1
+#define SSBack 2
+#define SSRight 3
+#define BZLeft 1
+#define BZBack 2
+#define BZRight 3
+
+#define trig_pin_L  5   // 좌측 초음파센서
+#define echo_pin_L  6   // 좌측 초음파센서
+#define trig_pin_R  8   // 후방 초음파 센서
+#define echo_pin_R  9   // 후방 초음파 센서
+#define trig_pin_B  12  // 우측 초음파 센서
+#define echo_pin_B  13  // 우측 초음파 센서
+#define Limit_dis 400 // 지정된 거리 이하일때 반응, 단위 [cm] 
+//HC-SR04 초음파 센서의 경우 최대 400cm의 거리 측정 가능
+
+int Set_Sensors(){
+  // setting SuperSonic Sensor 
+  pinMode(trig_pin_L, OUTPUT);
+  pinMode(echo_pin_L, INPUT);
+  pinMode(trig_pin_R, OUTPUT);
+  pinMode(echo_pin_R, INPUT);
+  pinMode(trig_pin_B, OUTPUT);
+  pinMode(echo_pin_B, INPUT);
+
+  return 0;
+}
+
+
+double getSS_R(){
+  double distance_R;
+  long timeout = 400 * 1000L / 340 * 2;
+  //초음파의 속도는 340m/s
+  //최대 측정거리를 감안한 초음파 측정 함수를 만들어 
+  //불필요한 대기시간을 제거하여 아두이노 구동지연현상 방지
+  digitalWrite(trig_pin_R, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig_pin_R, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin_R, LOW);
+
+  double time_R = pulseIn(echo_pin_R, HIGH, timeout);
+  distance_R = time_R * 340 / 10000 / 2;
+
+  return distance_R;
+}
+
+double getSS_L(){
+  double distance_L;
+  long timeout = 400 * 1000L / 340 * 2;
+  digitalWrite(trig_pin_L, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig_pin_L, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin_L, LOW);
+
+  double time_L = pulseIn(echo_pin_L, HIGH, timeout);
+  distance_L = time_L * 340 / 10000 / 2;
+
+  return distance_L;
+}
+
+
+double getSS_B(){
+  double distance_B;
+  long timeout = 400 * 1000L / 340 * 2;
+  digitalWrite(trig_pin_B, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig_pin_B, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin_B, LOW);
+
+  double time_B = pulseIn(echo_pin_B, HIGH, timeout);
+  distance_B = time_B * 340 / 10000 / 2;
+  return distance_B;
+}
+
+int output_Buzzer(int index){// 왼 뒤 오
+    switch (index){
+        case BZLeft: 
+          tone(1, 1000, 20);      //1번핀으로 1,000Hz음을 20ms 동안 발생
+          break;
+
+        case BZBack:
+          tone(2, 1000, 20);      //2번핀으로 1,000Hz음을 20ms 동안 발생
+          break;
+
+        case BZRight:
+          tone(3, 1000, 20);      //3번핀으로 1,000Hz음을 20ms 동안 발생
+          break;
+    }
+
+    return 0;
+}
+
+////////////////////////////////////////////////////
+
+void setup() {
+  Serial.begin(9600);
+  Set_Sensors();
+}
+
+void loop() {
+  double S1 = getSS_L();
+  double S2 = getSS_R();
+  double S3 = getSS_B();
+
+  if (S1 < Limit_dis){
+    Serial.println(S1);
+    output_Buzzer(BZLeft);
+  }
+  if (S2 < Limit_dis){
+    Serial.println(S2);
+    output_Buzzer(BZRight);
+  }
+  if (S3 < Limit_dis){
+    Serial.println(S3);
+    output_Buzzer(BZBack);
+  }
+}
